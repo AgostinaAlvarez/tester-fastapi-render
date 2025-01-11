@@ -12,34 +12,19 @@ app = FastAPI()
 driver = None
 
 # Inicializar el driver al inicio de la aplicación
+
 def init_chrome():
-    route = ChromeDriverManager().install()
     options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
 
-    options.add_argument("--headless")
-    options.add_argument("--disable-gpu")
-    user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
-    options.add_argument(f"user-agent={user_agent}")
-    options.add_argument("--start-maximized")
-    options.add_argument("--disable-web-security")
-    options.add_argument("--disable-extension")
-    options.add_argument("--disable-notifications")
-    options.add_argument("--ignore-certificate-errors")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--log-level=3")
-    options.add_argument("--allow-running-insecure-content")
-    options.add_argument("--disable-blink-features=AutomattionControlled")
+    # Especifica la ruta de Chromium, si se encuentra en un directorio específico
+    options.binary_location = '/usr/bin/chromium'  # Ajusta según el entorno
 
-    prefs = {
-        "profile.default_content_setting_values.notifications": 2,
-        "intl.accept_languages": ["es-ES", "es"],
-        "credentials_enable_service": False
-    }
-    options.add_experimental_option("prefs", prefs)
-
-    s = Service(route)
-    return webdriver.Chrome(service=s, options=options)
-
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=options)
+    return driver
 
 @app.on_event("startup")
 async def startup_event():
