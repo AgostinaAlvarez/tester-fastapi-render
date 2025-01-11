@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from fastapi.responses import JSONResponse
 
@@ -11,8 +12,10 @@ def download_selenium():
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     
-    # Usar ChromeDriverManager para obtener el path del driver automáticamente
-    driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=chrome_options)
+    # Usar Service para pasar el path del ChromeDriver
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    
     return driver
 
 @app.get('/data')
