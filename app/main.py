@@ -2,37 +2,33 @@ from fastapi import FastAPI
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import WebDriverException
-
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service as ChromeService
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-def get_driver():
-    options = Options()
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Chrome(options=options)
-    return driver
+@app.get("/get-google-title")
+async def get_google_title():
+    # Configuración del WebDriver
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")  # Ejecutar en modo headless
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
 
-@app.get("/scrape")
-async def scrape_google():
+    # Inicializar el WebDriver
+    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
+    
     try:
-        driver = get_driver()
         driver.get("https://google.com")
         title = driver.title
-        return {"title": title}
-    except WebDriverException as e:
-        # Manejo de errores específicos de Selenium
-        return {"error": f"Error al usar el WebDriver: {str(e)}"}
-    except Exception as e:
-        # Manejo de errores genéricos
-        return {"error": f"Error inesperado: {str(e)}"}
+        data = {"some_text": title}
     finally:
-        # Asegurarse de cerrar el driver si fue inicializado
-        try:
-            driver.quit()
-        except NameError:
-            pass
+        driver.quit()  # Cerrar el WebDriver después de su uso
+
+    return JSONResponse(content=data)
+
+
 
 @app.get("/")
 async def read_root():
