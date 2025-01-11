@@ -22,12 +22,21 @@ def download_selenium():
 
 @app.get('/data')
 def home():
-    driver = download_selenium()
-    driver.get("https://google.com")
-    title = driver.title
-    data = {"some_text": title}
-    driver.quit()  # Cerrar el WebDriver después de su uso
-    return data
+    try:
+        print("Iniciando Selenium...")
+        driver = download_selenium()
+        print("Selenium iniciado.")
+        driver.get("https://google.com")
+        print(f"Título de la página: {driver.title}")
+        title = driver.title
+        data = {"some_text": title}
+        driver.quit()  # Cerrar el WebDriver después de su uso
+        print("Selenium cerrado correctamente.")
+        return data
+    except Exception as e:
+        print(f"Error en la ruta /data: {e}")
+        return {"error": str(e)}  # Devuelve el error como JSON
+
 
 @app.get("/")
 async def read_root():
