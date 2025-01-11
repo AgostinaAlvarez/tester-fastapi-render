@@ -1,16 +1,18 @@
 from fastapi import FastAPI
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
 def download_selenium():
-    chrome_options = webdriver.ChromeOptions()
+    chrome_options = Options()
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.binary_location = "/usr/bin/chromium"  # Especificamos la ubicación de Chromium
     
     # Usar Service para pasar el path del ChromeDriver
     service = Service(ChromeDriverManager().install())
