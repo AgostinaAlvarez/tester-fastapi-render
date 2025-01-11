@@ -13,7 +13,11 @@ def download_selenium():
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    
+    # Usar ChromeDriverManager para obtener la ubicación de ChromeDriver
+    service = Service(ChromeDriverManager().install())  # Instanciamos el servicio correctamente
+    driver = webdriver.Chrome(service=service, options=chrome_options)  # Pasamos el servicio correctamente
+
     return driver
 
 @app.get('/data')
