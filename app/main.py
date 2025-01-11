@@ -1,8 +1,5 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.service import Service
-from selenium.common.exceptions import NoSuchElementException
 from webdriver_manager.chrome import ChromeDriverManager
 from fastapi.responses import JSONResponse
 
@@ -14,10 +11,8 @@ def download_selenium():
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     
-    # Usar ChromeDriverManager para obtener la ubicación de ChromeDriver
-    service = Service(ChromeDriverManager().install())  # Instanciamos el servicio correctamente
-    driver = webdriver.Chrome(service=service, options=chrome_options)  # Pasamos el servicio correctamente
-
+    # Usar ChromeDriverManager para obtener el path del driver automáticamente
+    driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=chrome_options)
     return driver
 
 @app.get('/data')
@@ -35,8 +30,7 @@ def home():
         return data
     except Exception as e:
         print(f"Error en la ruta /data: {e}")
-        return {"error": str(e)}  # Devuelve el error como JSON
-
+        return {"error": str(e)}
 
 @app.get("/")
 async def read_root():
@@ -46,11 +40,9 @@ async def read_root():
 async def create_item(name: str):
     return {"name": name, "status": "Item created"}
 
-
 @app.on_event("startup")
 def startup_event():
     print("Starting up FastAPI application")
-
 
 if __name__ == "__main__":
     import uvicorn

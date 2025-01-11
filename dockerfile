@@ -7,7 +7,15 @@ RUN apt-get update && apt-get install -y \
     curl \
     unzip \
     chromium \
-    chromium-driver
+    chromium-driver \
+    libx11-dev \
+    libgdk-pixbuf2.0-0 \
+    libnss3 \
+    libgconf-2-4 \
+    libxcomposite1 \
+    libxrandr2 \
+    libxtst6 \
+    libappindicator3-1
 
 # Instalar las dependencias de Python
 COPY requirements.txt .
