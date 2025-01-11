@@ -1,7 +1,7 @@
-# Usamos una imagen base con Python 3
+# Usar una imagen base con Python
 FROM python:3.11-slim
 
-# Instalamos dependencias del sistema necesarias (como Chromium y ChromeDriver)
+# Instalar dependencias del sistema necesarias (como Chromium y ChromeDriver)
 RUN apt-get update && apt-get install -y \
     wget \
     curl \
@@ -9,17 +9,16 @@ RUN apt-get update && apt-get install -y \
     chromium \
     chromium-driver
 
-# Definir el directorio de trabajo
-WORKDIR /app
-
-# Copiar archivos del proyecto
-COPY . /app
-
-# Instalar las dependencias de Python desde requirements.txt
+# Instalar las dependencias de Python
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Exponer el puerto que utilizará FastAPI
-EXPOSE 8000
+# Copiar los archivos del proyecto
+COPY . /app
+WORKDIR /app
 
-# Configurar el comando de inicio para usar gunicorn y uvicorn
-CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "app.main:app"]
+# Exponer el puerto
+EXPOSE 3000
+
+# Comando para ejecutar la aplicación FastAPI con Uvicorn
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "3000"]
